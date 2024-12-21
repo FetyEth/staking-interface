@@ -10,11 +10,20 @@
   },
   "dependencies": {
     "@privy-io/react-auth": "^1.98.1",
+    "@radix-ui/react-slot": "^1.1.1",
     "@tanstack/react-query": "^5.62.8",
     "@tanstack/react-query-devtools": "^5.62.8",
+    "axios": "1.13.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.469.0",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket.io": "4.8.1",
+    "socket.io-client": "4.8.1",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
     "viem": "^2.21.55"
   },
   "devDependencies": {

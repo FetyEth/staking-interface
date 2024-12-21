@@ -1,43 +1,32 @@
 "use client";
 
-import { usePrivy } from "@privy-io/react-auth";
-import { useState } from "react";
-import { useErc20Approve } from "@/hooks/useErc20Approve";
-import { useStakeDeposit } from "@/hooks/useStakeDeposit";
-import { useBalances } from "@/hooks/useBalances";
+import { useStakingProvider } from "@/providers/StakingProvider";
+import Image from "next/image";
 import { parseEther } from "viem";
 
 export function StakeInput() {
-  const [stakeAmount, setStakeAmount] = useState<string>("");
-  const { login, authenticated } = usePrivy();
-  const { approve, isApproving } = useErc20Approve();
-  const { deposit, isDepositing } = useStakeDeposit();
-  const { data: balances } = useBalances();
+  const {
+    balances,
+    stakeAmount,
+    setStakeAmount,
+    handleStake,
+    handleApprove,
+    isApproving,
+    isDepositing,
+  } = useStakingProvider();
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      if (!authenticated) {
-        login();
-        return;
-      }
-
-      if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
-        console.error("Please enter a valid amount");
-        return;
-      }
-
       try {
         const parsedAmount = parseEther(stakeAmount);
         const currentAllowance = balances?.allowance ?? BigInt(0);
 
         if (parsedAmount > currentAllowance) {
-          const approvalHash = await approve(stakeAmount);
+          const approvalHash = await handleApprove();
           console.log("Approval transaction hash:", approvalHash);
         }
 
-        const depositHash = await deposit(stakeAmount);
-        console.log("Deposit transaction hash:", depositHash);
-        setStakeAmount("");
+        await handleStake();
       } catch (error) {
         console.error("Error in staking process:", error);
       }
@@ -47,27 +36,34 @@ export function StakeInput() {
   const isProcessing = isApproving || isDepositing;
 
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor="stakeAmount" className="text-sm font-medium">
-        Amount to Stake
-      </label>
-      <input
-        id="stakeAmount"
-        type="number"
-        min="0"
-        step="any"
-        placeholder="Enter amount of IJN"
-        value={stakeAmount}
-        onChange={(e) => setStakeAmount(e.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={isProcessing}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-50"
-      />
-      {isApproving && (
-        <div className="text-sm text-gray-500">Approving tokens...</div>
-      )}
-      {isDepositing && (
-        <div className="text-sm text-gray-500">Depositing tokens...</div>
+    <div>
+      <div className="bg-gray-50 rounded-2xl p-2 flex items-center">
+        <input
+          type="number"
+          min="0"
+          step="any"
+          placeholder="Enter amount"
+          value={stakeAmount}
+          onChange={(e) => setStakeAmount(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={isProcessing}
+          className="border-0 bg-transparent text-lg w-full p-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-50"
+        />
+        <div className="flex items-center gap-2 pr-4">
+          <Image
+            src="https://ipfs.decentralized-content.com/ipfs/QmcTqdWEkevrzESmS8um7i88kcM3AY5oLLbKSZL3ToPqjX"
+            alt="IJN token"
+            width={24}
+            height={24}
+            className="rounded rounded-xl"
+          />
+          <span className="font-medium">IJN</span>
+        </div>
+      </div>
+      {isProcessing && (
+        <div className="text-start text-sm text-gray-500">
+          {isApproving ? "Approving tokens..." : "Depositing tokens..."}
+        </div>
       )}
     </div>
   );

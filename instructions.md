@@ -1,14 +1,29 @@
-# goal: UI to stake "I Just Need" (IJN)
+# goal: UI matches Figma
 
-1. install Privy
-2. show an input field to enter the amount of IJN to stake
-3. getBalances function / hook to use viem's multicall method to getBalance of both IJN token and locked IJN.
-4. create a hook or use tanstack query to save the balance of the user's IJN token and locked IJN to state.
-5. show balance - unstaked IJN to stake
-6. show balance - staked IJN
-7. StakeInput - onEnter - call `approve` function on the IJN token for the token amount entered in the input field
-8. Balances - show the amount approved for staking. Read this value from the IJN token contract. call the `allowance` function on the IJN token contract. operator set to the staking contract address.
-9. StakeInput - onEnter - if allowance is greater than amount entered in the input field, call `deposit` function on theStakingContract
-10. Balances - show time until staked IJN is available to withdraw. call depositTimestamps function on the staking contract to read when the IJN was deposited. Read lockDuration from the staking contract. Calculate the time until staked IJN is available to withdraw.
-11. show button - MAX - inputs the total balance of unstaked IJN
-12. show a button to stake the IJN
+## Steps
+
+1. StakingProvider - wrap the app in a provider
+2. see resources for what to export from the provider
+3. <StakeButton /> - pull code from page component to create a new component
+4. Stake button - calls the deposit function
+5. <TokenBalance> - new component to show the token balance. pull code from page component to create a new component.
+6. <TokenBalance> - show IJN balance in top right of the popup
+7. <LockedUntil /> - new component to show the locked until date. pull code from page component to create a new component.
+8. <LockedUntil /> - update with actual date withdrawal_time from now.
+9. <PopupCard /> - new component to wrap the popup content. pull code from page component to create a new component.
+10. Screen - show `blur` effect everywhere outside the popup
+11. update "/" root route to show the popup, replacing the current code at that route.
+12. remove any unused components / libs.
+13. Update the README.md with getting started instructions and key features of the app.
+
+## Resources
+
+### StakingProvider
+
+```tsx
+const [stakeAmount, setStakeAmount] = useState<string>("");
+const { login, authenticated } = usePrivy();
+const { approve, isApproving } = useErc20Approve();
+const { deposit, isDepositing } = useStakeDeposit();
+const { data: balances } = useBalances();
+```

@@ -1,26 +1,13 @@
 "use client";
 
-import LoginButton from "@/components/LoginButton";
-import LogoutButton from "@/components/LogoutButton";
-import { StakeInput } from "@/components/StakeInput";
-import { Balances } from "@/components/Balances";
-import { usePrivy } from "@privy-io/react-auth";
+import { PopupCard } from "@/components/PopupCard";
 
 export default function Home() {
-  const { authenticated } = usePrivy();
-
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-md mx-auto mt-20">
-        <div className="flex items-center w-full justify-between">
-          <h1 className="text-2xl font-bold mb-8">Stake IJN</h1>
-          {authenticated ? <LogoutButton /> : <LoginButton />}
-        </div>
-        <div className="flex flex-col gap-4">
-          <Balances />
-          <StakeInput />
-        </div>
-      </div>
-    </main>
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm">
+      <main className="min-h-screen flex items-center justify-center p-4">
+        <PopupCard />
+      </main>
+    </div>
   );
 }
